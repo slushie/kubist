@@ -65,3 +65,7 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+// require workers
+const workers = require.context('./workers')
+workers.keys().forEach(w => workers(w))
