@@ -1,5 +1,5 @@
 <template>
-    <el-menu :collapse="collapsed" :default-active="query.id" router>
+    <el-menu router>
       <el-menu-item v-for="query in queries" :key="query.id"
                     :index="query.id" :route="`/query/${query.id}`">
         <i class="swatch" :style="{backgroundColor: query.color}"></i>

@@ -2,14 +2,13 @@
 
 import _ from 'lodash'
 import Vue from 'vue'
-import { createClient, createEventSource } from 'kubernetes-stream/src/kubernetes'
-import KubernetesStream from 'kubernetes-stream/src/stream'
 
 const state = {
   queries: {
     'test-query': {
       id: 'test-query',
       name: 'Test Query',
+      apiVersion: 'v1',
       kind: 'Pod',
       selector: 'component=redis',
       color: 'green'
@@ -40,6 +39,7 @@ const mutations = {
   STORE_QUERY (state, query) {
     if (!has(query, 'name')) throw new TypeError('Missing name')
     if (!has(query, 'kind')) throw new TypeError('Missing kind')
+    if (!has(query, 'apiVersion')) throw new TypeError('Missing apiVersion')
     if (!has(query, 'selector')) throw new TypeError('Missing selector')
     if (!has(query, 'color')) query.color = nextColor(state)
 
@@ -60,21 +60,6 @@ const getters = {
     const queries = state.queries
     return Object.keys(queries)
       .map(id => ({ path: `/query/${id}`, name: queries[id].name }))
-  },
-
-  streamForId (state) {
-    return function (slug) {
-      const query = state.queries[slug]
-      if (!query) throw new Error(`No query at ${slug}`)
-
-      const namespace = query.namespace
-      const k = query.kind.split('/', 2)
-      const apiVersion = k.length === 1 ? 'v1' : k.shift()
-      const kind = k.shift()
-
-      const client = createClient({ kind, apiVersion, namespace })
-      return new KubernetesStream(createEventSource(client))
-    }
   }
 }
 

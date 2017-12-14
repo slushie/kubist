@@ -2,40 +2,95 @@
 
 import Vue from 'vue'
 
+import { createClient, createEventSource } from 'kubernetes-stream/src/kubernetes'
+import KubernetesStream from 'kubernetes-stream/src/stream'
+
 const state = {
-  resources: {},
+  objects: {},
   streams: {}
 }
 
+const streams = {}
+
 const getters = {
-  queryResults: (state) => (id) => state.resources[id]
+  queryResults: (state) => (id) => state.objects[id]
 }
 
 const mutations = {
-  INFORMER_APPLY_DELTA (state, id, delta) {
-    let resources = state.resources[id]
-    if (!resources) {
-      resources = Vue.set(state.resources, id, {})
+  APPLY_DELTA (state, id, delta) {
+    let objects = state.objects[id]
+    if (!objects) {
+      objects = Vue.set(state.objects, id, {})
     }
 
     const { type, object } = delta
     switch (type) {
       case 'Added': case 'Updated': case 'Sync':
-        Vue.set(resources, object.metadata.name, object)
+        Vue.set(objects, object.metadata.name, object)
         break
 
       case 'Deleted':
-        delete resources[object.metadata.name]
+        delete objects[object.metadata.name]
         break
     }
   },
-  INFORMER_CLEAR (state, id) {
-    Vue.set(state.resources, id, {})
+
+  CLEAR_OBJECTS (state, id) {
+    Vue.set(state.objects, id, {})
+  },
+
+  CREATE_STREAM (state, query) {
+    if (!query.id) throw new TypeError('No query id')
+    if (streams[query.id]) return
+
+    const { kind, apiVersion, namespace } = query
+    const client = createClient({ kind, apiVersion, namespace })
+
+    streams[query.id] = new KubernetesStream({
+      source: createEventSource(client),
+      labelSelector: query.selector
+    })
+
+    Vue.set(state.streams, query.id, true)
+  },
+
+  DELETE_STREAM (state, id) {
+    delete streams[id]
+    delete state.streams[id]
+  }
+}
+
+const actions = {
+  async runQuery ({ commit, state }, query) {
+    commit('CREATE_STREAM', query)
+
+    const id = query.id
+    const stream = streams[id]
+
+    stream.on('list', (list) => {
+      list.forEach((object) => {
+        commit('APPLY_DELTA', id, { type: 'Sync', object })
+      })
+    }).on('event', (delta) => {
+      commit('APPLY_DELTA', delta)
+    })
+
+    await stream.list()
+    return stream.watch()
+  },
+
+  stopQuery ({ commit, state }, id) {
+    const stream = streams[id]
+    commit('DELETE_STREAM', id)
+
+    stream.removeAllListeners()
+    stream.close()
   }
 }
 
 export default {
   state,
   mutations,
-  getters
+  getters,
+  actions
 }
