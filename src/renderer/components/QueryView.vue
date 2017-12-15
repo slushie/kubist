@@ -1,10 +1,12 @@
 <template>
   <el-container>
     <el-header>
-      <editor @run-query="handleRun" :query="query"></editor>
+      <editor @run-query="handleRun"
+              :running="running"
+              :query="query"></editor>
     </el-header>
     <el-main>
-      <results :id="id"></results>
+      <results :queryId="queryId"></results>
     </el-main>
   </el-container>
 </template>
@@ -25,8 +27,9 @@
       const empty = {}
 
       return {
-        id: null,
-        query: empty
+        queryId: null,
+        query: empty,
+        running: false
       }
     },
 
@@ -40,16 +43,22 @@
       ...mapActions(['runQuery']),
 
       updateView (id) {
-        this.id = id
+        this.queryId = id
+        this.$debug('Showing query %j', id)
 
         const query = this.queries[id]
         if (query) this.query = _.clone(query)
       },
 
       handleRun () {
-        console.log(this.id, this.query)
-        // this.$store.commit('STORE_QUERY', this.query)
-        this.runQuery(this.query)
+        this.$debug('Running %j', this.query)
+        this.runQuery(this.query).then(
+          () => { this.running = true },
+          (err) => this.$notify.error({
+            title: 'Query Failed',
+            message: err.message.trim()
+          })
+        )
       },
 
       handleSave () {
@@ -58,9 +67,9 @@
         this.$store.commit('STORE_QUERY', query)
 
         if (query.id !== id) {
-          this.id = query.id
+          this.queryId = query.id
 
-          // delete the query with the old name
+          // delete the query with the old id
           if (id !== null) {
             this.$store.commit('DELETE_QUERY', id)
           }
@@ -69,9 +78,7 @@
     },
 
     mounted () {
-      this.id = this.$route.params.id
-
-      this.updateView(this.id)
+      this.updateView(this.$route.params.id)
     },
 
     beforeRouteUpdate (to, from, next) {

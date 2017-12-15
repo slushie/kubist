@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="queryResults(id)" height="100%">
+  <el-table :data="queryResults(queryId)" height="100%">
   </el-table>
 </template>
 
@@ -8,7 +8,7 @@
 
   export default {
     name: 'results',
-    props: ['id'],
+    props: ['queryId'],
 
     computed: {
       ...mapGetters([

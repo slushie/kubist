@@ -1,13 +1,16 @@
 <template>
   <el-card>
-    <el-button @click="$emit('run-query', query)">Run</el-button>
+    <el-button @click="$emit('run-query', query)"
+               :disabled="running">
+      Run
+    </el-button>
   </el-card>
 </template>
 
 <script>
   export default {
     name: 'editor',
-    props: ['query']
+    props: ['query', 'running']
   }
 </script>
 

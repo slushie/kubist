@@ -1,16 +1,15 @@
 'use strict'
 
+import _ from 'lodash'
 import Vue from 'vue'
+import { ipcRenderer } from 'electron'
 
-import { createClient, createEventSource } from 'kubernetes-stream/src/kubernetes'
-import KubernetesStream from 'kubernetes-stream/src/stream'
+const debug = require('debug')('kubist:store:informer')
 
 const state = {
   objects: {},
   streams: {}
 }
-
-const streams = {}
 
 const getters = {
   queryResults: (state) => (id) => state.objects[id]
@@ -39,53 +38,84 @@ const mutations = {
     Vue.set(state.objects, id, {})
   },
 
-  CREATE_STREAM (state, query) {
-    if (!query.id) throw new TypeError('No query id')
-    if (streams[query.id]) return
+  ADD_STREAM_LISTENERS (state, id, listeners) {
+    if (state.streams[id]) return
 
-    const { kind, apiVersion, namespace } = query
-    const client = createClient({ kind, apiVersion, namespace })
-
-    streams[query.id] = new KubernetesStream({
-      source: createEventSource(client),
-      labelSelector: query.selector
-    })
-
-    Vue.set(state.streams, query.id, true)
+    _.each(listeners, (fn, ev) => ipcRenderer.on(ev, fn))
+    Vue.set(state.streams, id, listeners)
   },
 
-  DELETE_STREAM (state, id) {
-    delete streams[id]
+  REMOVE_STREAM_LISTENERS (state, id) {
+    const listeners = state.streams[id]
+    if (!listeners) return
+
+    _.each(listeners, (fn, ev) => ipcRenderer.removeListener(ev, fn))
     delete state.streams[id]
   }
 }
 
 const actions = {
   async runQuery ({ commit, state }, query) {
-    commit('CREATE_STREAM', query)
-
     const id = query.id
-    const stream = streams[id]
+    if (!id) throw new Error('Missing query id')
 
-    stream.on('list', (list) => {
-      list.forEach((object) => {
-        commit('APPLY_DELTA', id, { type: 'Sync', object })
+    const listeners = {
+      [`informer:stream-${id}:list`] (ev, list) {
+        list.forEach((object) => {
+          commit('APPLY_DELTA', id, { type: 'Sync', object })
+        })
+      },
+      [`informer:stream-${id}:event`] (ev, delta) {
+        commit('APPLY_DELTA', delta)
+      }
+    }
+
+    const createEv = `informer:stream-created:${id}`
+    const startEv = `informer:stream-started:${id}`
+    const failEv = `informer:stream-failed:${id}`
+
+    return promisifyEvents(ipcRenderer, createEv, failEv, () => {
+      debug('Creating stream %j for %j', id, query)
+      ipcRenderer.send('informer:create-stream', id, query)
+    }).then(() => {
+      commit('ADD_STREAM_LISTENERS', id, listeners)
+
+      return promisifyEvents(ipcRenderer, startEv, failEv, () => {
+        debug('Starting stream %j', id)
+        ipcRenderer.send('informer:start-stream', id)
       })
-    }).on('event', (delta) => {
-      commit('APPLY_DELTA', delta)
-    })
-
-    await stream.list()
-    return stream.watch()
+    }).then(() => id)
   },
 
-  stopQuery ({ commit, state }, id) {
-    const stream = streams[id]
-    commit('DELETE_STREAM', id)
-
-    stream.removeAllListeners()
-    stream.close()
+  stopQuery ({ commit }, id) {
+    commit('REMOVE_STREAM_LISTENERS', id)
+    ipcRenderer.send('informer:destroy-stream', id)
   }
+}
+
+function promisifyEvents (emitter, successEvent, failureEvent, afterListen) {
+  return new Promise((resolve, reject) => {
+    function onFailure (ev, errObj) {
+      emitter.removeListener(successEvent, onSuccess)
+
+      const type = global[errObj.name]
+      delete errObj.name
+
+      const err = Object.create(type.prototype)
+      Object.assign(err, errObj)
+      reject(err)
+    }
+
+    function onSuccess (ev, val) {
+      emitter.removeListener(failureEvent, onFailure)
+      resolve(val)
+    }
+
+    emitter.once(successEvent, onSuccess)
+    emitter.once(failureEvent, onFailure)
+
+    if (afterListen) afterListen()
+  })
 }
 
 export default {
