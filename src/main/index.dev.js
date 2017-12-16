@@ -7,6 +7,10 @@
 
 /* eslint-disable */
 
+process.on('unhandledRejection', (r) => {
+  console.log('Unhandled promise rejection:', r)
+})
+
 // Set environment for development
 process.env.NODE_ENV = 'development'
 
