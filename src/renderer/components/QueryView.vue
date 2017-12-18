@@ -2,6 +2,8 @@
   <el-container>
     <el-header>
       <editor @run-query="handleRun"
+              @save-query="handleSave"
+              @stop-query="handleStop"
               :running="running"
               :query="query"></editor>
     </el-header>
@@ -42,7 +44,7 @@
 
         const query = this.queries[id]
         if (query) {
-          this.$debug('Loaded query %j', id)
+          this.$debug('Loaded query %j', query)
           this.query = _.clone(query)
         } else {
           this.$debug('Creating new query object %j', defaultQuery)
@@ -65,7 +67,6 @@
 
     methods: {
       ...mapActions([
-        'runQuery',
         'listRunningQueries'
       ]),
 
@@ -73,7 +74,7 @@
         this.$debug('Running %j', this.query)
 
         try {
-          await this.runQuery(this.query)
+          await this.$store.dispatch('runQuery', this.query)
           this.running = true
         } catch (err) {
           this.$debug('Failed to run query', err.stack)
@@ -97,6 +98,11 @@
             this.$store.commit('DELETE_QUERY', id)
           }
         }
+      },
+
+      async handleStop () {
+        await this.$store.dispatch('stopQuery', this.queryId)
+        this.running = false
       }
     },
 

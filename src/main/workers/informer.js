@@ -49,6 +49,9 @@ ipcMain.on('informer:create-stream', (event, id, query) => {
 
     debug('Watching stream %j', id)
     stream.watch()
+
+    const startedEvent = `informer:stream-started:${id}`
+    event.sender.send(startedEvent)
   } catch (err) {
     debug('Failed communicating with Kubernetes: %s', err)
     event.sender.send(`informer:stream-failed:${id}`, serializeError(err))

@@ -92,6 +92,7 @@ const actions = {
   },
 
   stopQuery ({ commit }, id) {
+    debug('Stopping stream %j', id)
     commit('REMOVE_STREAM_LISTENERS', id)
     ipcRenderer.send('informer:destroy-stream', id)
   }
