@@ -1,6 +1,6 @@
 {
   "name": "kubist",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Josh Leder <josh@ha.cr>",
   "description": "Kubist is a Kubernetes Operator Panel",
   "license": "MIT",
