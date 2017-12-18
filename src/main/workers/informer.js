@@ -9,19 +9,21 @@ const streams = {}
 
 ipcMain.on('informer:create-stream', (event, id, query) => {
   try {
-    const { kind, apiVersion, namespace } = query
-    const client = createClient({ kind, apiVersion, namespace })
-    const stream = streams[id] = new KubernetesStream({
-      source: createEventSource(client),
-      labelSelector: query.selector
-    })
+    if (!streams[id]) {
+      const { kind, apiVersion, namespace } = query
+      const client = createClient({ kind, apiVersion, namespace })
+      const stream = streams[id] = new KubernetesStream({
+        source: createEventSource(client),
+        labelSelector: query.selector
+      })
 
-    debug('Created stream %j for query %j', id, query)
+      debug('Created stream %j for query %j', id, query)
 
-    const listEvent = `informer:stream-${id}:list`
-    const deltaEvent = `informer:stream-${id}:event`
-    stream.on('list', (list) => event.sender.send(listEvent, list))
-      .on('event', (delta) => event.sender.send(deltaEvent, delta))
+      const listEvent = `informer:stream-${id}:list`
+      const deltaEvent = `informer:stream-${id}:event`
+      stream.on('list', (list) => event.sender.send(listEvent, list))
+        .on('event', (delta) => event.sender.send(deltaEvent, delta))
+    }
 
     event.sender.send(`informer:stream-created:${id}`)
   } catch (err) {
@@ -51,4 +53,6 @@ ipcMain.on('informer:create-stream', (event, id, query) => {
     debug('Failed communicating with Kubernetes: %s', err)
     event.sender.send(`informer:stream-failed:${id}`, serializeError(err))
   }
+}).on('informer:list-streams-sync', (event) => {
+  event.returnValue = Object.keys(streams)
 })

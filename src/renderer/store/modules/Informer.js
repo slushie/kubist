@@ -87,6 +87,10 @@ const actions = {
     }).then(() => id)
   },
 
+  listRunningQueries () {
+    return ipcRenderer.sendSync('informer:list-streams-sync')
+  },
+
   stopQuery ({ commit }, id) {
     commit('REMOVE_STREAM_LISTENERS', id)
     ipcRenderer.send('informer:destroy-stream', id)

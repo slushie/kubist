@@ -18,18 +18,42 @@
   import { mapState, mapActions } from 'vuex'
   import _ from 'lodash'
 
+  const defaultQuery = {}
+
   export default {
     name: 'query-view',
 
     components: { Editor, Results },
 
     data () {
-      const empty = {}
-
       return {
         queryId: null,
-        query: empty,
+        query: _.clone(defaultQuery),
         running: false
+      }
+    },
+
+    watch: {
+      async queryId (id) {
+        if (!id) {
+          this.running = false
+          return
+        }
+
+        const query = this.queries[id]
+        if (query) {
+          this.$debug('Loaded query %j', id)
+          this.query = _.clone(query)
+        } else {
+          this.$debug('Creating new query object %j', defaultQuery)
+          this.query = _.clone(defaultQuery)
+        }
+
+        const queries = await this.listRunningQueries()
+
+        if (~queries.indexOf(id)) {
+          this.running = true
+        }
       }
     },
 
@@ -40,25 +64,24 @@
     },
 
     methods: {
-      ...mapActions(['runQuery']),
+      ...mapActions([
+        'runQuery',
+        'listRunningQueries'
+      ]),
 
-      updateView (id) {
-        this.queryId = id
-        this.$debug('Showing query %j', id)
-
-        const query = this.queries[id]
-        if (query) this.query = _.clone(query)
-      },
-
-      handleRun () {
+      async handleRun () {
         this.$debug('Running %j', this.query)
-        this.runQuery(this.query).then(
-          () => { this.running = true },
-          (err) => this.$notify.error({
+
+        try {
+          await this.runQuery(this.query)
+          this.running = true
+        } catch (err) {
+          this.$debug('Failed to run query', err.stack)
+          this.$notify.error({
             title: 'Query Failed',
             message: err.message.trim()
           })
-        )
+        }
       },
 
       handleSave () {
@@ -78,11 +101,11 @@
     },
 
     mounted () {
-      this.updateView(this.$route.params.id)
+      this.queryId = _.get(this.$route, 'params.id')
     },
 
     beforeRouteUpdate (to, from, next) {
-      this.updateView(to.params.id)
+      this.queryId = to.params.id
       next()
     }
   }

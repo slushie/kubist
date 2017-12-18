@@ -7,6 +7,7 @@
 
 /* eslint-disable */
 
+require('throw-max-listeners-error')
 process.on('unhandledRejection', (r) => {
   console.log('Unhandled promise rejection:', r)
 })
