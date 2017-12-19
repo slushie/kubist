@@ -38,7 +38,7 @@ const mutations = {
     Vue.set(state.objects, id, {})
   },
 
-  ADD_STREAM_LISTENERS (state, id, listeners) {
+  ADD_STREAM_LISTENERS (state, { id, listeners }) {
     if (state.streams[id]) return
 
     _.each(listeners, (fn, ev) => ipcRenderer.on(ev, fn))
@@ -55,12 +55,37 @@ const mutations = {
 }
 
 const actions = {
-  async runQuery ({ commit, state }, query) {
+  async runQuery ({ commit, dispatch }, query) {
     const id = query.id
     if (!id) throw new Error('Missing query id')
 
+    const createEv = `informer:stream-created:${id}`
+    const startEv = `informer:stream-started:${id}`
+    const failEv = `informer:stream-failed:${id}`
+
+    await promisifyEvents(ipcRenderer, createEv, failEv, () => {
+      debug('Creating stream %j for %j', id, query)
+      ipcRenderer.send('informer:create-stream', id, query)
+    })
+
+    await dispatch('listenForQueryResults', id)
+
+    await promisifyEvents(ipcRenderer, startEv, failEv, () => {
+      debug('Starting stream %j', id)
+      ipcRenderer.send('informer:start-stream', id)
+    })
+
+    return id
+  },
+
+  listRunningQueries () {
+    return ipcRenderer.sendSync('informer:list-streams-sync')
+  },
+
+  async listenForQueryResults ({ commit }, id) {
     const listeners = {
       [`informer:stream-${id}:list`] (ev, list) {
+        console.log('list', list)
         list.forEach((object) => {
           commit('APPLY_DELTA', id, { type: 'Sync', object })
         })
@@ -70,25 +95,7 @@ const actions = {
       }
     }
 
-    const createEv = `informer:stream-created:${id}`
-    const startEv = `informer:stream-started:${id}`
-    const failEv = `informer:stream-failed:${id}`
-
-    return promisifyEvents(ipcRenderer, createEv, failEv, () => {
-      debug('Creating stream %j for %j', id, query)
-      ipcRenderer.send('informer:create-stream', id, query)
-    }).then(() => {
-      commit('ADD_STREAM_LISTENERS', id, listeners)
-
-      return promisifyEvents(ipcRenderer, startEv, failEv, () => {
-        debug('Starting stream %j', id)
-        ipcRenderer.send('informer:start-stream', id)
-      })
-    }).then(() => id)
-  },
-
-  listRunningQueries () {
-    return ipcRenderer.sendSync('informer:list-streams-sync')
+    commit('ADD_STREAM_LISTENERS', { id, listeners })
   },
 
   stopQuery ({ commit }, id) {
@@ -98,7 +105,7 @@ const actions = {
   }
 }
 
-function promisifyEvents (emitter, successEvent, failureEvent, afterListen) {
+async function promisifyEvents (emitter, successEvent, failureEvent, afterListen) {
   return new Promise((resolve, reject) => {
     function onFailure (ev, errObj) {
       emitter.removeListener(successEvent, onSuccess)
