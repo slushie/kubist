@@ -1,24 +1,29 @@
 <template>
-  <el-table :data="queryResults(queryId)">
+  <el-table :data="results" stripe>
+    <el-table-column prop="name" label="Name"></el-table-column>
   </el-table>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import _ from 'lodash'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'results',
     props: ['queryId'],
 
     computed: {
-      ...mapGetters([
-        'queryResults'
-      ])
-    },
+      ...mapState({
+        objects: (state) => state.Informer.objects || {}
+      }),
 
-    watch: {
-      queryResults (val) {
-        this.$debug('new query results: %j', val)
+      results () {
+        const objects = this.objects[this.queryId]
+        if (!objects) return []
+
+        return Object.keys(objects).filter(Boolean)
+          .map(name => _(objects[name]))
+          .map(o => ({ name: o.get('metadata.name') }))
       }
     }
   }

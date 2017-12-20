@@ -55,6 +55,8 @@
 
         if (~queries.indexOf(id)) {
           this.running = true
+          await this.listenForQueryResults(id)
+          await this.syncQueryResults(id)
         }
       }
     },
@@ -67,7 +69,9 @@
 
     methods: {
       ...mapActions([
-        'listRunningQueries'
+        'listRunningQueries',
+        'listenForQueryResults',
+        'syncQueryResults'
       ]),
 
       async handleRun () {

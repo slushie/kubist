@@ -39,7 +39,7 @@ ipcMain.on('informer:create-stream', (event, id, query) => {
   delete streams[id]
   stream.removeAllListeners()
   stream.close()
-}).on('informer:start-stream', async (event, id) => {
+}).on('informer:watch-stream', async (event, id) => {
   const stream = streams[id]
   if (!stream) return
 
@@ -50,12 +50,17 @@ ipcMain.on('informer:create-stream', (event, id, query) => {
     debug('Watching stream %j', id)
     stream.watch()
 
-    const startedEvent = `informer:stream-started:${id}`
-    event.sender.send(startedEvent)
+    const watchedEvent = `informer:stream-watched:${id}`
+    event.sender.send(watchedEvent)
   } catch (err) {
     debug('Failed communicating with Kubernetes: %s', err)
     event.sender.send(`informer:stream-failed:${id}`, serializeError(err))
   }
+}).on('informer:list-stream', async (event, id) => {
+  const stream = streams[id]
+  if (!stream) return
+
+  await stream.list()
 }).on('informer:list-streams-sync', (event) => {
   event.returnValue = Object.keys(streams)
 })

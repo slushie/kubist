@@ -11,12 +11,8 @@ const state = {
   streams: {}
 }
 
-const getters = {
-  queryResults: (state) => (id) => state.objects[id]
-}
-
 const mutations = {
-  APPLY_DELTA (state, id, delta) {
+  APPLY_DELTA (state, { id, delta }) {
     let objects = state.objects[id]
     if (!objects) {
       objects = Vue.set(state.objects, id, {})
@@ -60,7 +56,7 @@ const actions = {
     if (!id) throw new Error('Missing query id')
 
     const createEv = `informer:stream-created:${id}`
-    const startEv = `informer:stream-started:${id}`
+    const watchEv = `informer:stream-watched:${id}`
     const failEv = `informer:stream-failed:${id}`
 
     await promisifyEvents(ipcRenderer, createEv, failEv, () => {
@@ -70,12 +66,16 @@ const actions = {
 
     await dispatch('listenForQueryResults', id)
 
-    await promisifyEvents(ipcRenderer, startEv, failEv, () => {
-      debug('Starting stream %j', id)
-      ipcRenderer.send('informer:start-stream', id)
+    await promisifyEvents(ipcRenderer, watchEv, failEv, () => {
+      debug('Watching stream %j', id)
+      ipcRenderer.send('informer:watch-stream', id)
     })
 
     return id
+  },
+
+  async syncQueryResults (_, id) {
+    return ipcRenderer.send('informer:list-stream', id)
   },
 
   listRunningQueries () {
@@ -85,13 +85,15 @@ const actions = {
   async listenForQueryResults ({ commit }, id) {
     const listeners = {
       [`informer:stream-${id}:list`] (ev, list) {
-        console.log('list', list)
-        list.forEach((object) => {
-          commit('APPLY_DELTA', id, { type: 'Sync', object })
+        debug('Stream %j has %d objects', id, list.items.length)
+        list.items.forEach((object) => {
+          const delta = { type: 'Sync', object }
+          commit('APPLY_DELTA', { id, delta })
         })
       },
       [`informer:stream-${id}:event`] (ev, delta) {
-        commit('APPLY_DELTA', delta)
+        debug('Stream %j got delta %j', id, delta.type)
+        commit('APPLY_DELTA', { id, delta })
       }
     }
 
@@ -133,6 +135,5 @@ async function promisifyEvents (emitter, successEvent, failureEvent, afterListen
 export default {
   state,
   mutations,
-  getters,
   actions
 }
