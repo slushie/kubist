@@ -10,7 +10,7 @@ const state = {
       name: 'Test Query',
       apiVersion: 'v1',
       kind: 'Pod',
-      selector: 'component=redis',
+      namespace: 'default',
       color: 'green'
     }
   },

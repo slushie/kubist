@@ -1,7 +1,7 @@
 'use strict'
 
 import { ipcMain } from 'electron'
-import KubernetesStream, { createClient, createEventSource } from 'kubernetes-stream'
+import KubernetesStream from 'kubernetes-stream'
 import serializeError from 'serialize-error'
 
 const debug = require('debug')('kubist:worker:informer')
@@ -11,10 +11,11 @@ ipcMain.on('informer:create-stream', (event, id, query) => {
   try {
     if (!streams[id]) {
       const { kind, apiVersion, namespace } = query
-      const client = createClient({ kind, apiVersion, namespace })
+      const resource = [apiVersion, kind].join('/')
       const stream = streams[id] = new KubernetesStream({
-        source: createEventSource(client),
-        labelSelector: query.selector
+        labelSelector: query.selector,
+        resource,
+        namespace
       })
 
       debug('Created stream %j for query %j', id, query)
