@@ -10,8 +10,7 @@ const streams = {}
 ipcMain.on('informer:create-stream', (event, id, query) => {
   try {
     if (!streams[id]) {
-      const { kind, apiVersion, namespace } = query
-      const resource = [apiVersion, kind].join('/')
+      const { resource, namespace } = query
       const stream = streams[id] = new KubernetesStream({
         labelSelector: query.selector,
         resource,
