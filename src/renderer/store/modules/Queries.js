@@ -8,8 +8,7 @@ const state = {
     'test-query': {
       id: 'test-query',
       name: 'Test Query',
-      apiVersion: 'v1',
-      kind: 'Pod',
+      resource: 'v1/pod',
       namespace: 'default',
       color: 'green'
     }
