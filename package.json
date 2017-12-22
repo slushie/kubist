@@ -59,6 +59,7 @@
     "axios": "^0.16.1",
     "debug": "latest",
     "element-ui": "^2.0.8",
+    "express-pouchdb": "^2.3.7",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.2",
     "kubernetes-stream": "^1.0.2",
