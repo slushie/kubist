@@ -59,11 +59,13 @@
     "axios": "^0.16.1",
     "debug": "latest",
     "element-ui": "^2.0.8",
+    "express": "^4.16.2",
     "express-pouchdb": "^2.3.7",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.2",
     "kubernetes-stream": "^1.0.2",
     "lodash": "latest",
+    "morgan": "^1.9.0",
     "photonkit": "^0.1.2",
     "pouchdb": "^6.4.1",
     "serialize-error": "^2.1.0",
@@ -73,7 +75,8 @@
     "vue-electron": "^1.0.6",
     "vue-photonkit": "^1.2.3",
     "vue-router": "^2.5.3",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "body-parser": "latest"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
