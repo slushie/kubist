@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "body-parser": "latest",
     "debug": "latest",
     "element-ui": "^2.0.8",
     "express": "^4.16.2",
@@ -68,15 +69,17 @@
     "morgan": "^1.9.0",
     "photonkit": "^0.1.2",
     "pouchdb": "^6.4.1",
+    "pouchdb-find": "^6.4.1",
+    "pouchdb-live-find": "^0.4.0",
     "serialize-error": "^2.1.0",
     "throw-max-listeners-error": "^1.0.1",
     "topcoat": "^0.7.5",
     "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
     "vue-photonkit": "^1.2.3",
+    "vue-pouch": "0.0.23",
     "vue-router": "^2.5.3",
-    "vuex": "^2.3.1",
-    "body-parser": "latest"
+    "vuex": "^2.3.1"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

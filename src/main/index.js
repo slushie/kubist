@@ -8,6 +8,11 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-require('./db')
+// start the api backend
+const api = require('./api')
+api.start().then((url) => {
+  console.log('api at %j', url)
+  global.apiUrl = url
+})
+
 require('./window')
-require('./api')
