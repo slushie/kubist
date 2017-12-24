@@ -2,18 +2,10 @@
 
 import _ from 'lodash'
 import Vue from 'vue'
+import axios from 'axios'
+import PouchDB from 'pouchdb'
 
 const state = {
-  queries: {
-    'test-query': {
-      id: 'test-query',
-      name: 'Test Query',
-      resource: 'v1/pod',
-      namespace: 'default',
-      color: 'green'
-    }
-  },
-
   colors: [
     'red',
     'green',
@@ -37,9 +29,7 @@ function nextColor (state) {
 const mutations = {
   STORE_QUERY (state, query) {
     if (!has(query, 'name')) throw new TypeError('Missing name')
-    if (!has(query, 'kind')) throw new TypeError('Missing kind')
-    if (!has(query, 'apiVersion')) throw new TypeError('Missing apiVersion')
-    if (!has(query, 'selector')) throw new TypeError('Missing selector')
+    if (!has(query, 'resource')) throw new TypeError('Missing resource')
     if (!has(query, 'color')) query.color = nextColor(state)
 
     query.id = _.kebabCase(query.name)
