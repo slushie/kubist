@@ -2,8 +2,6 @@
 
 import _ from 'lodash'
 import Vue from 'vue'
-import axios from 'axios'
-import PouchDB from 'pouchdb'
 
 const state = {
   colors: [

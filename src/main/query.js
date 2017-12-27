@@ -1,15 +1,16 @@
 'use strict'
 
-const KubernetesStream = require('kubernetes-stream')
+import KubernetesStream from 'kubernetes-stream'
+import { Router } from 'express'
+import { openObjectStream, closeStream } from './stream'
+import PouchDB from './db'
 
-const { openObjectStream, closeStream } = require('./stream')
-
-const PouchDB = require('./db')
 const Queries = new PouchDB('queries')
 
-const router = require('express').Router()
-const debug = require('debug')('kubist:query')
+const router = Router()
+export default router
 
+const debug = require('debug')('kubist:query')
 const watching = {}
 
 router.get('/watch', (req, res) => {
@@ -54,5 +55,3 @@ router.delete('/watch/:id', async (req, res, next) => {
     next(err)
   }
 })
-
-module.exports = router

@@ -25,7 +25,8 @@ function logStats (proc, data) {
   if (typeof data === 'object') {
     data.toString({
       colors: true,
-      chunks: false
+      chunks: false,
+      maxModules: Infinity
     }).split(/\r?\n/).forEach(line => {
       log += '  ' + line + '\n'
     })

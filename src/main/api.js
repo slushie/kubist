@@ -1,11 +1,16 @@
 'use strict'
 
-const http = require('http')
-const url = require('url')
-const morgan = require('morgan')
-const expressPouchDB = require('express-pouchdb')
-const api = require('express')()
-const PouchDB = require('./db')
+import http from 'http'
+import url from 'url'
+import express from 'express'
+import morgan from 'morgan'
+import expressPouchDB from 'express-pouchdb'
+
+import PouchDB from './db'
+import Query from './query'
+
+const api = express()
+export default api
 
 api.use(morgan(
   process.env.NODE_ENV !== 'development'
@@ -14,7 +19,7 @@ api.use(morgan(
 ))
 
 api.use('/db', expressPouchDB(PouchDB))
-api.use('/query', require('./query'))
+api.use('/query', Query)
 
 api.use((err, req, res, next) => {
   console.log('Error', err.stack)
@@ -35,12 +40,11 @@ api.start = async function (port, host) {
       const bind = server.address()
       server.url = url.format({
         protocol: 'http',
-        host: [bind.address, bind.port].join(':')
+        hostname: bind.address,
+        port: bind.port
       })
 
       resolve(server.url)
     })
   })
 }
-
-module.exports = api

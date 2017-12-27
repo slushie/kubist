@@ -2,7 +2,9 @@
   <el-card>
     <el-row :gutter="20">
       <el-col :span="4">
-        <el-select v-model="query.resource" placeholder="Resource">
+        <el-select v-model="query.resource"
+                   placeholder="Resource"
+                   :disabled="running">
           <el-option v-for="r in resources"
                      :key="r.value"
                      :label="r.label"
@@ -11,7 +13,8 @@
         </el-select>
       </el-col>
       <el-col>
-
+        <el-input :disabled="running"
+                  v-model="query.selector"></el-input>
       </el-col>
       <el-col :span="6">
         <el-button-group>

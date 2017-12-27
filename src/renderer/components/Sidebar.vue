@@ -1,7 +1,7 @@
 <template>
     <el-menu router>
-      <el-menu-item v-for="query in queries" :key="query.id"
-                    :index="query.id" :route="`/query/${query.id}`">
+      <el-menu-item v-for="query in queries" :key="query._id"
+                    :index="query._id" :route="`/query/${query.id}`">
         <i class="swatch" :style="{backgroundColor: query.color}"></i>
         <span slot="title">{{query.name}}</span>
       </el-menu-item>
@@ -10,21 +10,11 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-
   export default {
     name: 'sidebar',
 
-    computed: {
-      ...mapGetters(['queries'])
-    },
-
-    data () {
-      const queries = this.$store.getters.queries
-      return {
-        collapsed: true,
-        query: queries[0]
-      }
+    pouch: {
+      queries: {}
     }
   }
 </script>

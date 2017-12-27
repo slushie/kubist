@@ -1,14 +1,13 @@
 'use strict'
 
-const PouchDB = require('./db')
-const Objects = new PouchDB('objects')
+import PouchDB from './db'
+import _ from 'lodash'
 
 const debug = require('debug')('kubist:stream')
-const _ = require('lodash')
-
+const Objects = new PouchDB('objects')
 const streams = {}
 
-async function openObjectStream (id, stream) {
+export async function openObjectStream (id, stream) {
   if (streams[id]) throw new Error(`Stream ${id} already open`)
   streams[id] = stream
 
@@ -44,7 +43,7 @@ async function openObjectStream (id, stream) {
     })
 }
 
-async function closeStream (id) {
+export async function closeStream (id) {
   const stream = streams[id]
   delete streams[id]
 
@@ -63,7 +62,7 @@ function getObjectVersion (object) {
   return _.get(object, 'metadata.resourceVersion', '0')
 }
 
-function storeObject (object) {
+export function storeObject (object) {
   const id = object._id = getObjectId(object)
   const ver = getObjectVersion(object)
   const $skip = {}
@@ -94,7 +93,7 @@ function storeObject (object) {
     })
 }
 
-function deleteObject (object) {
+export function deleteObject (object) {
   const id = getObjectId(object)
   debug('deleting object %j', id)
   return Objects.get(id).then(
@@ -112,11 +111,4 @@ function createStatusError (status) {
     'kind', 'status', 'code',
     'message', 'details', 'reason'
   ]))
-}
-
-module.exports = {
-  openObjectStream,
-  storeObject,
-  deleteObject,
-  closeStream
 }
