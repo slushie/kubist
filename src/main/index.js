@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 // start the api backend
-api.start().then((url) => {
+api.start(0, 'localhost').then((url) => {
   console.log('api at %j', url)
   global.apiUrl = url
 })

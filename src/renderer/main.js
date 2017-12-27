@@ -21,7 +21,7 @@ Vue.config.productionTip = false
 
 const apiUrl = remote.getGlobal('apiUrl')
 const pouch = PouchDB.defaults({
-  prefix: apiUrl + '/db'
+  prefix: apiUrl + '/db/'
 })
 
 pouch.plugin(require('pouchdb-find'))
