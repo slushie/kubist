@@ -11,8 +11,13 @@ export default new Router({
       component: require('@/components/QueryView').default
     },
     {
+      path: '/query',
+      name: 'create-query',
+      component: require('@/components/QueryView').default
+    },
+    {
       path: '*',
-      redirect: '/query/test-query'
+      redirect: '/query'
     }
   ]
 })

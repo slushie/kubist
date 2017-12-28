@@ -40,10 +40,21 @@
 
   export default {
     name: 'editor',
-    props: ['query', 'running'],
+    props: ['queryId'],
     data () {
       return {
-        resources
+        resources,
+        query: {},
+        running: false
+      }
+    },
+    pouch: {
+      query () {
+        return {
+          database: 'queries',
+          selector: { _id: this.queryId },
+          first: true
+        }
       }
     }
   }

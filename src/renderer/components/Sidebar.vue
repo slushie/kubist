@@ -1,7 +1,7 @@
 <template>
     <el-menu router>
       <el-menu-item v-for="query in queries" :key="query._id"
-                    :index="query._id" :route="`/query/${query.id}`">
+                    :index="query._id" :route="`/query/${query._id}`">
         <i class="swatch" :style="{backgroundColor: query.color}"></i>
         <span slot="title">{{query.name}}</span>
       </el-menu-item>

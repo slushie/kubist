@@ -1,9 +1,11 @@
 'use strict'
 
-import _ from 'lodash'
-import Vue from 'vue'
 import axios from 'axios'
 import { remote } from 'electron'
+
+const http = axios.create({
+  baseURL: remote.getGlobal('apiUrl') + '/query/watch'
+})
 
 const state = {
   colors: [
@@ -20,15 +22,11 @@ const state = {
   watches: []
 }
 
-const has = (o, p) => o[p] !== undefined
-
-function nextColor (state) {
-  const color = state.colors[state.lastColorCounter]
-  state.lastColorCounter = (1 + state.lastColorCounter) % state.colors
-  return color
+const getters = {
+  color: (state) => state.colors[state.lastColorCounter],
+  isWatching: (state) => (id) => ~state.watches.indexOf(id)
 }
 
-const http = axios.create({ baseURL: remote.getGlobal('apiUrl') + '/query/watch' })
 const actions = {
   async createWatch ({ commit }, id) {
     await http.post(id)
@@ -43,6 +41,12 @@ const actions = {
   async syncWatches ({ commit }) {
     const watches = await http.get('')
     commit('SET_WATCHES', watches.data.watching)
+  },
+
+  async nextColor ({ commit, getters }) {
+    const color = getters.color
+    commit('CYCLE_COLOR')
+    return color
   }
 }
 
@@ -58,16 +62,10 @@ const mutations = {
 
   SET_WATCHES (state, ids) {
     state.watches = ids.map(x => x)
-  }
-}
+  },
 
-const getters = {
-  queries: (state) => Object.values(state.queries),
-
-  queryRoutes: (state) => {
-    const queries = state.queries
-    return Object.keys(queries)
-      .map(id => ({ path: `/query/${id}`, name: queries[id].name }))
+  CYCLE_COLOR (state) {
+    state.lastColorCounter = (1 + state.lastColorCounter) % state.colors
   }
 }
 
