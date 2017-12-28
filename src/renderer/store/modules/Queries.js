@@ -2,6 +2,8 @@
 
 import _ from 'lodash'
 import Vue from 'vue'
+import axios from 'axios'
+import { remote } from 'electron'
 
 const state = {
   colors: [
@@ -13,7 +15,9 @@ const state = {
     'yellow'
   ],
 
-  lastColorCounter: 0
+  lastColorCounter: 0,
+
+  watches: []
 }
 
 const has = (o, p) => o[p] !== undefined
@@ -24,19 +28,36 @@ function nextColor (state) {
   return color
 }
 
-const mutations = {
-  STORE_QUERY (state, query) {
-    if (!has(query, 'name')) throw new TypeError('Missing name')
-    if (!has(query, 'resource')) throw new TypeError('Missing resource')
-    if (!has(query, 'color')) query.color = nextColor(state)
-
-    query.id = _.kebabCase(query.name)
-    if (has(state.queries, query.id)) throw new Error(`Query ${query.id} exists`)
-    Vue.set(state.queries, query.id, _.clone(query))
+const http = axios.create({ baseURL: remote.getGlobal('apiUrl') + '/query/watch' })
+const actions = {
+  async createWatch ({ commit }, id) {
+    await http.post(id)
+    commit('ADD_WATCH', id)
   },
 
-  DELETE_QUERY (state, id) {
-    delete state.queries[id]
+  async deleteWatch ({ commit }, id) {
+    await http.delete(id)
+    commit('REMOVE_WATCH', id)
+  },
+
+  async syncWatches ({ commit }) {
+    const watches = await http.get('')
+    commit('SET_WATCHES', watches.data.watching)
+  }
+}
+
+const mutations = {
+  ADD_WATCH (state, id) {
+    if (~state.watches.indexOf(id)) return
+    state.watches.push(id)
+  },
+
+  REMOVE_WATCH (state, id) {
+    state.watches = state.watches.filter(w => w !== id)
+  },
+
+  SET_WATCHES (state, ids) {
+    state.watches = ids.map(x => x)
   }
 }
 
@@ -53,5 +74,6 @@ const getters = {
 export default {
   state,
   mutations,
-  getters
+  getters,
+  actions
 }

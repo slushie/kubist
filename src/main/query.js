@@ -36,7 +36,7 @@ router.post('/watch/:id', async (req, res, next) => {
     debug('created stream for query', query)
     await openObjectStream(id, stream)
 
-    res.json({ watching: true })
+    res.json({ id, watching: true })
   } catch (err) {
     next(err)
   }
@@ -50,7 +50,7 @@ router.delete('/watch/:id', async (req, res, next) => {
 
   try {
     await closeStream(id)
-    res.json({ watching: false })
+    res.json({ id, watching: false })
   } catch (err) {
     next(err)
   }

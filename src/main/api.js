@@ -7,7 +7,7 @@ import morgan from 'morgan'
 import expressPouchDB from 'express-pouchdb'
 
 import PouchDB from './db'
-import Query from './query'
+import QueryMiddleware from './query'
 
 const api = express()
 export default api
@@ -19,15 +19,18 @@ api.use(morgan(
 ))
 
 api.use('/db', expressPouchDB(PouchDB))
-api.use('/query', Query)
+api.use('/query', QueryMiddleware)
 
 api.use((err, req, res, next) => {
   console.log('Error', err.stack)
-  res.status(err.status || 500).send(
-    process.env.NODE_ENV !== 'development'
-      ? err.toString()
-      : err.stack
-  )
+  res.status(err.status || 500).json({
+    error: {
+      name: err.name || 'Error',
+      message: process.env.NODE_ENV !== 'development'
+        ? err.toString()
+        : err.stack
+    }
+  })
 })
 
 api.start = async function (port, host) {

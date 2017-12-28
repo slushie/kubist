@@ -12,3 +12,4 @@ thumbs.db
 .idea/
 src/main/log.txt
 src/db/
+log.txt

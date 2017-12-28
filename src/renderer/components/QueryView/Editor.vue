@@ -12,7 +12,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col>
+      <el-col :span="14">
         <el-input :disabled="running"
                   v-model="query.selector"></el-input>
       </el-col>
