@@ -4,6 +4,7 @@ import http from 'http'
 import url from 'url'
 import express from 'express'
 import morgan from 'morgan'
+import cors from 'cors'
 import expressPouchDB from 'express-pouchdb'
 
 import PouchDB from './db'
@@ -12,6 +13,7 @@ import QueryMiddleware from './query'
 const api = express()
 export default api
 
+api.use(cors())
 api.use(morgan(
   process.env.NODE_ENV !== 'development'
     ? 'combined'
