@@ -40,10 +40,12 @@
 
     watch: {
       queryId (id) {
+        console.log('new query id', id)
         if (!id) this.createQuery()
       },
 
       query (query) {
+        if (!this.queryId) return // creating
         if (!query || query.length === 0) {
           this.$notify({
             title: 'Not found',
@@ -64,7 +66,8 @@
         const name = 'Untitled Query'
 
         const doc = await this.$pouch.post('queries', { color, name })
-        this.$router.push({ name: 'query-view', params: { id: doc.id } })
+        await this.$router.replace({ name: 'query-view', params: { id: doc.id } })
+        this.queryId = doc.id
       }
     },
 

@@ -1,6 +1,19 @@
 <template>
   <el-card>
     <el-row :gutter="10">
+      <el-col :span="2">
+        <el-color-picker v-model="query.color"
+                         :disabled="watching">
+        </el-color-picker>
+      </el-col>
+      <el-col :span="22">
+        <el-input :disabled="watching"
+                  v-model="query.name"
+                  placeholder="Name" required>
+        </el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
       <el-col :span="4">
         <el-select v-model="query.resource"
                    placeholder="Resource"
@@ -12,11 +25,11 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="14">
+      <el-col :span="16">
         <el-input :disabled="watching"
-                  v-model="query.name"></el-input>
+                  v-model="query.selector"></el-input>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="4">
         <el-button-group>
           <el-button @click="handleWatch"
                      :disabled="watching" title="Watch">

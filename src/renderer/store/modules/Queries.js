@@ -8,12 +8,12 @@ const http = axios.create({
 })
 
 const colors = [
-  'red',
-  'green',
-  'blue',
-  'orange',
-  'cyan',
-  'yellow'
+  '#a00',
+  '#0a0',
+  '#00c',
+  '#c0a',
+  '#aa0',
+  '#0aa'
 ]
 
 const state = {
