@@ -65,17 +65,6 @@
 
         const doc = await this.$pouch.post('queries', { color, name })
         this.$router.push({ name: 'query-view', params: { id: doc.id } })
-      },
-
-      async selectFirstQuery () {
-        if (this.queries.length === 0) {
-          await this.createQuery()
-          this.$notify({
-            title: 'Welcome',
-            message: 'Created an empty query',
-            type: 'info'
-          })
-        }
       }
     },
 

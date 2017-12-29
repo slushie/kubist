@@ -1,30 +1,45 @@
+<template>
+  <div>
+    <h2>Kubist</h2>
+    <p>
+      <i class="fa fa-spinner fa-spin"></i>
+      Please wait...
+    </p>
+  </div>
+</template>
+
 <script>
   export default {
     name: 'home',
-    render: () => {},
+    data () {
+      return {
+        queries: {}
+      }
+    },
+
     pouch: {
       queries: {}
     },
-    mounted () {
-      if (this.queries && this.queries.length > 0) {
-        const id = this.queries[0]._id
-        this.$debug('loading first query %j', id)
 
-        this.$router.replace({
-          name: 'query-view',
-          params: { id }
-        })
-      } else {
-        this.$notify({
-          title: 'Welcome',
-          message: 'Created an empty query',
-          type: 'info'
-        })
+    watch: {
+      queries (q) {
+        if (q.length === 0) {
+          this.$notify({
+            title: 'Welcome',
+            type: 'info',
+            message: 'Created a new query'
+          })
 
-        this.$router.replace({
-          name: 'create-query'
-        })
+          this.$router.replace({ name: 'create-query' })
+        } else {
+          const id = q[0]._id
+          this.$router.replace({ name: 'query-view', params: { id } })
+        }
       }
     }
   }
 </script>
+
+<style scoped>
+
+</style>
