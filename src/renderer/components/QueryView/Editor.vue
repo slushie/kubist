@@ -4,7 +4,7 @@
       <el-col :span="4">
         <el-select v-model="query.resource"
                    placeholder="Resource"
-                   :disabled="running">
+                   :disabled="watching">
           <el-option v-for="r in resources"
                      :key="r.value"
                      :label="r.label"
@@ -13,17 +13,17 @@
         </el-select>
       </el-col>
       <el-col :span="14">
-        <el-input :disabled="running"
-                  v-model="query.selector"></el-input>
+        <el-input :disabled="watching"
+                  v-model="query.name"></el-input>
       </el-col>
       <el-col :span="6">
         <el-button-group>
-          <el-button @click="$emit('run-query')"
-                     :disabled="running" title="Run">
+          <el-button @click="handleWatch"
+                     :disabled="watching" title="Watch">
             <i class="fa fa-play"></i>
           </el-button>
-          <el-button @click="$emit('stop-query')"
-                     :disabled="!running" title="Stop">
+          <el-button @click="handleStop"
+                     :disabled="!watching" title="Stop">
             <i class="fa fa-stop"></i>
           </el-button>
         </el-button-group>
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
+
   const resources = [
     { label: 'Pods', value: 'v1/pod' },
     { label: 'Services', value: 'v1/service' }
@@ -41,13 +43,14 @@
   export default {
     name: 'editor',
     props: ['queryId'],
+
     data () {
       return {
         resources,
-        query: {},
-        running: false
+        query: {}
       }
     },
+
     pouch: {
       query () {
         return {
@@ -57,11 +60,35 @@
         }
       }
     },
+
+    computed: {
+      watching () {
+        if (!this.query) return false
+        return this.$store.getters.isWatching(this.query._id)
+      }
+    },
+
     watch: {
-      query () {
-        if (!this.query.resource) {
-          this.query.resource = resources[0].value
+      query (query) {
+        if (!query.resource) {
+          query.resource = resources[0].value
         }
+      }
+    },
+
+    methods: {
+      ...mapActions([
+        'createWatch',
+        'deleteWatch'
+      ]),
+
+      async handleWatch () {
+        await this.$pouch.put('queries', this.query)
+        return this.createWatch(this.queryId)
+      },
+
+      async handleStop () {
+        return this.deleteWatch(this.queryId)
       }
     }
   }

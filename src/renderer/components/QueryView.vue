@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <editor v-if="queryId && query._id" :queryId="queryId"></editor>
+      <editor v-if="queryId" :queryId="queryId"></editor>
     </el-header>
     <el-main>
       <objects></objects>
@@ -23,13 +23,12 @@
 
     data () {
       return {
-        queryId: null,
+        queryId: {},
         query: {}
       }
     },
 
     pouch: {
-      queries: {},
       query () {
         return {
           database: 'queries',
@@ -39,41 +38,20 @@
       }
     },
 
-    computed: {
-      firstQueryId () {
-        if (this.queries.length > 0) {
-          return this.queries[0]._id
-        } else {
-          return null
-        }
-      }
-    },
-
     watch: {
-      async queryId (id) {
-        if (id) return
-
-        if (this.queries.length !== 0) {
-          this.queryId = this.firstQueryId
-        } else {
-          await this.createQuery()
-          this.$notify({
-            title: 'Welcome',
-            message: 'Created an empty query',
-            type: 'info'
-          })
-        }
+      queryId (id) {
+        if (!id) this.createQuery()
       },
 
       query (query) {
-        if (query.length === 0) {
+        if (!query || query.length === 0) {
           this.$notify({
             title: 'Not found',
             message: `Query ${this.queryId} not found`,
             type: 'error'
           })
-
-          this.$router.replace({ name: 'create-query' })
+        } else {
+          this.$debug('loaded query %j', query)
         }
       }
     },

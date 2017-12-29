@@ -25,7 +25,7 @@ const state = {
 
 const getters = {
   color: (state) => state.colors[state.lastColorCounter],
-  isWatching: (state) => (id) => ~state.watches.indexOf(id)
+  isWatching: (state) => (id) => !!~state.watches.indexOf(id)
 }
 
 const actions = {
@@ -66,7 +66,7 @@ const mutations = {
   },
 
   CYCLE_COLOR (state) {
-    state.lastColorCounter = (1 + state.lastColorCounter) % state.colors
+    state.lastColorCounter = (1 + state.lastColorCounter) % state.colors.length
   }
 }
 

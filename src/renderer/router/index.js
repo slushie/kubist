@@ -17,7 +17,8 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: { name: 'query-view', params: { id: null } }
+      name: 'home',
+      component: require('@/components/Home').default
     }
   ]
 })
