@@ -17,7 +17,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/query'
+      redirect: { name: 'query-view', params: { id: null } }
     }
   ]
 })

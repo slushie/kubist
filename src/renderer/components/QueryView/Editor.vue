@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <el-row :gutter="20">
+    <el-row :gutter="10">
       <el-col :span="4">
         <el-select v-model="query.resource"
                    placeholder="Resource"
@@ -54,6 +54,13 @@
           database: 'queries',
           selector: { _id: this.queryId },
           first: true
+        }
+      }
+    },
+    watch: {
+      query () {
+        if (!this.query.resource) {
+          this.query.resource = resources[0].value
         }
       }
     }

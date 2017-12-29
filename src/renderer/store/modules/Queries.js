@@ -7,17 +7,18 @@ const http = axios.create({
   baseURL: remote.getGlobal('apiUrl') + '/query/watch'
 })
 
-const state = {
-  colors: [
-    'red',
-    'green',
-    'blue',
-    'orange',
-    'cyan',
-    'yellow'
-  ],
+const colors = [
+  'red',
+  'green',
+  'blue',
+  'orange',
+  'cyan',
+  'yellow'
+]
 
-  lastColorCounter: 0,
+const state = {
+  colors,
+  lastColorCounter: Math.floor(Math.random() * colors.length),
 
   watches: []
 }
