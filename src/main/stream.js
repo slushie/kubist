@@ -41,6 +41,10 @@ export async function openObjectStream (id, stream) {
           debug('Unhandled watch event', ev)
       }
     })
+
+  debug('opening stream %j', id)
+  await stream.list()
+  await stream.watch()
 }
 
 export async function closeStream (id) {
