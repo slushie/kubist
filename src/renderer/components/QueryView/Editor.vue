@@ -46,6 +46,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import { mapActions } from 'vuex'
 
   const resources = [
@@ -95,9 +96,20 @@
         'deleteWatch'
       ]),
 
+      async handleSave () {
+        return this.$pouch.put('queries', this.query)
+      },
+
       async handleWatch () {
-        await this.$pouch.put('queries', this.query)
-        return this.createWatch(this.queryId)
+        await this.handleSave()
+        return this.createWatch(this.queryId).catch((err) => {
+          const message = _.get(err, 'response.data.error.code', err.message)
+          this.$notify({
+            type: 'error',
+            title: 'Watch Failed',
+            message
+          })
+        })
       },
 
       async handleStop () {

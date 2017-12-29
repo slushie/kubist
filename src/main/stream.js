@@ -9,7 +9,6 @@ const streams = {}
 
 export async function openObjectStream (id, stream) {
   if (streams[id]) throw new Error(`Stream ${id} already open`)
-  streams[id] = stream
 
   stream.on('list', (list) => {
     if (list.kind === 'Status') {
@@ -45,6 +44,7 @@ export async function openObjectStream (id, stream) {
   debug('opening stream %j', id)
   await stream.list()
   await stream.watch()
+  streams[id] = stream
 }
 
 export async function closeStream (id) {
@@ -85,7 +85,7 @@ export function storeObject (object) {
       return object
     }
   }, (err) => {
-    if (err.error === 'not_found') return object
+    if (err.name === 'not_found') return object
     throw err
   })
     .then((object) => Objects.put(object))

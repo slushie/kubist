@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-header height="auto">
       <editor v-if="queryId" :queryId="queryId"></editor>
     </el-header>
     <el-main>

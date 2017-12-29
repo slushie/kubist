@@ -65,7 +65,6 @@
     "express-pouchdb": "^2.3.7",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.2",
-    "kubernetes-stream": "^1.0.2",
     "lodash": "latest",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.0",

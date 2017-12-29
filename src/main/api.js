@@ -32,12 +32,15 @@ api.use((err, req, res, next) => {
     'statusCode',
     'response.status'
   ]).find(Boolean)
+  const code = status
+    ? http.STATUS_CODES[status]
+    : undefined
 
   res.status(status || 500).json({
     error: {
       name: err.name || 'Error',
       message: err.toString(),
-      code: status
+      code
     }
   })
 })

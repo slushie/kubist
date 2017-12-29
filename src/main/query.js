@@ -38,6 +38,7 @@ router.post('/watch/:id', async (req, res, next) => {
 
     res.json({ id, watching: true })
   } catch (err) {
+    watching[id] = false
     next(err)
   }
 })
