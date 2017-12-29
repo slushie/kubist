@@ -1,5 +1,6 @@
 'use strict'
 
+import _ from 'lodash'
 import http from 'http'
 import url from 'url'
 import express from 'express'
@@ -24,13 +25,19 @@ api.use('/db', expressPouchDB(PouchDB))
 api.use('/query', QueryMiddleware)
 
 api.use((err, req, res, next) => {
-  console.log('Error', err.stack)
-  res.status(err.status || 500).json({
+  console.error('Request failed:', err.stack)
+  const status = _.at(err, [
+    'status',
+    'code',
+    'statusCode',
+    'response.status'
+  ]).find(Boolean)
+
+  res.status(status || 500).json({
     error: {
       name: err.name || 'Error',
-      message: process.env.NODE_ENV !== 'development'
-        ? err.toString()
-        : err.stack
+      message: err.toString(),
+      code: status
     }
   })
 })
