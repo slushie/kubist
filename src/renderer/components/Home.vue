@@ -9,32 +9,37 @@
 </template>
 
 <script>
+
+
   export default {
     name: 'home',
     data () {
       return {
-        queries: {}
+        watches: {}
       }
     },
 
     pouch: {
-      queries: {}
+      watches: {}
     },
 
     watch: {
-      queries (q) {
-        if (q.length === 0) {
+      async watches (w) {
+        let id
+        if (w.length !== 0) {
+          id = w[0]._id
+        } else {
+          const doc = await this.$pouch.post('watches', {})
+          id = doc.id
+
           this.$notify({
             title: 'Welcome',
             type: 'info',
-            message: 'Created a new query'
+            message: 'Create a new watch!'
           })
-
-          this.$router.replace({ name: 'create-query' })
-        } else {
-          const id = q[0]._id
-          this.$router.replace({ name: 'query-view', params: { id } })
         }
+
+        this.$router.replace({ name: 'watch', params: { id } })
       }
     }
   }

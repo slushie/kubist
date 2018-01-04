@@ -29,8 +29,8 @@ const getters = {
 }
 
 const actions = {
-  async createWatch ({ commit }, id) {
-    await http.post(id)
+  async createWatch ({ commit }, { id, query }) {
+    await http.post(id, { query })
     commit('ADD_WATCH', id)
   },
 

@@ -8,16 +8,17 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import ElementUI from 'element-ui'
+import BootstrapVue from 'bootstrap-vue'
 
-import 'element-ui/lib/theme-chalk/index.css'
 import 'font-awesome/css/font-awesome.min.css'
-
-Vue.use(ElementUI)
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
+Vue.use(BootstrapVue)
 
 const apiUrl = remote.getGlobal('apiUrl')
 const pouch = PouchDB.defaults({

@@ -6,14 +6,9 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/query/:id',
-      name: 'query-view',
-      component: require('@/components/QueryView').default
-    },
-    {
-      path: '/query',
-      name: 'create-query',
-      component: require('@/components/QueryView').default
+      path: '/watch/:id',
+      name: 'watch',
+      component: require('@/components/WatchView').default
     },
     {
       path: '*',

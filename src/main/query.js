@@ -1,6 +1,7 @@
 'use strict'
 
 import KubernetesStream from 'kubernetes-stream'
+import bodyParser from 'body-parser'
 import { Router } from 'express'
 import { openObjectStream, closeStream } from './stream'
 import PouchDB from './db'
@@ -17,7 +18,7 @@ router.get('/watch', (req, res) => {
   return res.json({ watching: Object.keys(watching) })
 })
 
-router.post('/watch/:id', async (req, res, next) => {
+router.post('/watch/:id', bodyParser.json(), async (req, res, next) => {
   const id = req.params.id
 
   try {
@@ -34,7 +35,9 @@ router.post('/watch/:id', async (req, res, next) => {
     })
 
     debug('created stream for query', query)
-    await openObjectStream(id, stream)
+    const store = req.body.store || new Date().toISOString()
+
+    await openObjectStream(id, stream, store)
 
     res.json({ id, watching: true })
   } catch (err) {
