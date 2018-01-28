@@ -2,27 +2,14 @@
 
 > Kubist is a Kubernetes Operator Panel
 
-#### Build Setup
+## Setup
 
-``` bash
-# install dependencies
-npm install
+1. `npm install`
+2. `npm run build`
+3. Copy `src/config.example.js` to `src/config.js`. Replace appropriate values.
+4. Serve with your favorite web server. (ie: nginx)
 
-# serve with hot reload at localhost:9080
-npm run dev
+## Authors
 
-# build electron application for production
-npm run build
-
-# run unit & end-to-end tests
-npm test
-
-
-# lint all JS/Vue component files in `src/`
-npm run lint
-
-```
-
----
-
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+* Josh Leder
+* Brad Janke
