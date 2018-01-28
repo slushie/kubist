@@ -1,6 +1,7 @@
-import {config} from './config'
+import config from './config'
+import PouchDB from 'pouchdb'
 
-let localdb = new PouchDB(comfig.localdb)
+let localdb = new PouchDB(config.localdb)
 let remotedb = new PouchDB(config.remotedb);
 
 remotedb.info().then((info) => {
