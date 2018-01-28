@@ -1,5 +1,8 @@
 import config from './config'
 import PouchDB from 'pouchdb'
+import m from 'mithril'
+
+import home from './components/home'
 
 let localdb = new PouchDB(config.localdb)
 let remotedb = new PouchDB(config.remotedb);
@@ -36,3 +39,5 @@ localdb.replicate.from(remotedb,
   // handle error
   console.log('error', err)
 });
+
+m.mount(document.body, home)

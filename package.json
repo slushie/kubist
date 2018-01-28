@@ -4,7 +4,8 @@
   "description": "> Kubist is a Kubernetes Operator Panel",
   "main": "webpack.config.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack -d",
+    "watch": "webpack -d --watch"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
+    "mithril": "^1.1.6",
     "pouchdb": "^6.4.2"
   }
 }
