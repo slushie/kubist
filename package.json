@@ -5,7 +5,9 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack -d",
-    "watch": "webpack -d --watch"
+    "watch": "webpack -d --watch",
+    "couch": "docker run -d -p 5984:5984 couchdb",
+    "agent": "kubist-agent -U admin -p"
   },
   "repository": {
     "type": "git",
