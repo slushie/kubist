@@ -1,7 +1,7 @@
 import pouch from '@/lib/pouch'
 import m from 'mithril'
 
-import Home from './components/home'
+import Home from './components/dashboard'
 
 pouch.remotedb.info().then((info) => {
   console.log(info);
@@ -10,6 +10,6 @@ pouch.remotedb.info().then((info) => {
 pouch.start()
 
 // routing
-m.route(document.body, "/home", {
-    "/home": Home
+m.route(document.body, "/dashboard", {
+    "/dashboard": Home
 })
