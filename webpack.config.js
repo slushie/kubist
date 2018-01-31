@@ -5,7 +5,10 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
   entry: './src/main.js', // entry point of application
   plugins: [
-    new HtmlWebpackPlugin({title: 'Kubist'}), // generates index.html in our dist dir
+    new HtmlWebpackPlugin({
+      title: 'Kubist',
+      template: 'src/index.html'
+    }), // generates index.html in our dist dir
     new CleanWebpackPlugin(['dist']) // cleans dist dir
   ],
   output: {
