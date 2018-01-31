@@ -2,19 +2,19 @@ import config from '@/config'
 import PouchDB from 'pouchdb'
 import { debug } from '@/utils/log'
 
-let localdb = new PouchDB(config.localdb)
-let remotedb = new PouchDB(config.remotedb);
+const localDb = new PouchDB(config.localdb)
+const remoteDb = new PouchDB(config.remotedb)
 
-remotedb.info().then((info) => {
-  console.log('RemoteDB info', info);
+remoteDb.info().then((info) => {
+  console.log('RemoteDB info', info)
 })
 
-function start() {
-  localdb.replicate.from(remotedb, 
-  {
-    live: true, 
-    retry: true
-  }
+function start () {
+  return localDb.replicate.from(remoteDb,
+    {
+      live: true,
+      retry: true
+    }
   ).on('change', (info) => {
     // handle change
     debug('root change', info)
@@ -33,38 +33,11 @@ function start() {
   }).on('error', (err) => {
     // handle error
     debug('root error', err)
-  });
-}
-
-function init_handler(db, obj) {
-  if (!obj.change) {
-    throw new Error('Remote handler does not have change a change method')
-  }
-
-  db.changes({
-    live: true,
-    include_docs: true
-  }).on('change', obj.change)
-  .on('complete', (info) => {
-    if (obj.complete) {
-      obj.complete(info);
-    }
   })
-  .on('error',  (err) => {
-    console.log('RemoteDB error', err)
-    
-    if (obj.error) {
-      obj.error(err);
-    }
-  });
 }
 
-function remote_handler(obj) {
-  init_handler(remotedb, obj)
+export default {
+  localDb,
+  remoteDb,
+  start
 }
-
-function local_handler(obj) {
-  init_handler(localdb, obj)
-}
-
-export default { remote_handler, local_handler, start }
