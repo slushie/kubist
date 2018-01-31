@@ -1,35 +1,33 @@
 import pouch from '@/lib/pouch'
 import m from 'mithril'
+import _ from 'lodash'
 
 class Dashboard {
-    constructor(vnode) {
-        // vnode.state is undefined at this point
-        this.kind = "ES6 class"
-    }
+  constructor () {
+    this.doc = null
+  }
 
-    oncreate(vnode) {
-      console.log('oncreate');
-      pouch.local_handler({change: this.change.bind(this), complete: this.complete, error: this.error})
-    }
+  oncreate () {
+    this._redraw = _.throttle(() => m.redraw(), 100)
 
-    change(info) {
-      this.kind = info.changes[0].rev;
-      console.log(info.changes[0].rev, this.kind);
-      m.redraw();
-    }
+    pouch.localDb.changes({
+      live: true,
+      retry: true,
+      include_docs: true
+    })
+      .on('change', (e) => {
+        this._handleChange(e)
+        setImmediate(this._redraw)
+      })
+  }
 
-    complete(info) {
-      console.log('complete', info);
-    }
+  _handleChange (info) {
+    this.doc = info.doc
+  }
 
-    error(err) {
-      console.log('error', err);
-    }
-
-    view(vnode) {
-      console.log('view', vnode.state);
-      return m("div", this.kind)
-    }
+  view () {
+    return m('div', _.get(this.doc, 'metadata.namespace'))
+  }
 }
 
 export default Dashboard
