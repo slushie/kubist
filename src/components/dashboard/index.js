@@ -17,7 +17,7 @@ class Dashboard {
     })
       .on('change', (e) => {
         this._handleChange(e)
-        setImmediate(this._redraw)
+        setImmediate(() => m.redraw())
       })
   }
 
@@ -26,7 +26,7 @@ class Dashboard {
   }
 
   view () {
-    return m('div', _.get(this.doc, 'metadata.namespace'))
+    return m('div', _.get(this.doc, 'metadata.resourceVersion'))
   }
 }
 

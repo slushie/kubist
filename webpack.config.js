@@ -17,12 +17,25 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: 'babel-loader',
-          // options: {
-          //   presets: ['babel-loader']
-          // }
-        }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['babel-preset-env']
+            }
+          },
+          {
+            loader: 'standard-loader',
+            options: {
+              // Emit errors instead of warnings (default = false)
+              error: false,
+              // enable snazzy output (default = true)
+              snazzy: true,
+              // other config options to be passed through to standard e.g.
+              // parser: 'babel-eslint'
+            }
+          }
+        ]
       }
     ]
   },
