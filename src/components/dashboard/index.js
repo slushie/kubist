@@ -8,16 +8,13 @@ class Dashboard {
   }
 
   oncreate () {
-    this._redraw = _.throttle(() => m.redraw(), 100)
-
-    pouch.localDb.changes({
+    this.changes = pouch.watchChanges({
       live: true,
       retry: true,
       include_docs: true
     })
       .on('change', (e) => {
         this._handleChange(e)
-        setImmediate(() => m.redraw())
       })
   }
 

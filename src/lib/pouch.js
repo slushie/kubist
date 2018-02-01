@@ -1,9 +1,14 @@
-import config from '@/config'
 import PouchDB from 'pouchdb'
+import _ from 'lodash'
+import m from 'mithril'
+
+import config from '@/config'
 import { debug } from '@/utils/log'
 
 const localDb = new PouchDB(config.localdb)
 const remoteDb = new PouchDB(config.remotedb)
+
+export const REDRAW_INTERVAL = 100
 
 remoteDb.info().then((info) => {
   console.log('RemoteDB info', info)
@@ -36,8 +41,16 @@ function start () {
   })
 }
 
+const redraw = _.throttle(() => { m.redraw() }, REDRAW_INTERVAL)
+
+function watchChanges () {
+  return localDb.changes(...arguments)
+    .on('change', () => { setImmediate(redraw) })
+}
+
 export default {
   localDb,
   remoteDb,
-  start
+  start,
+  watchChanges
 }
