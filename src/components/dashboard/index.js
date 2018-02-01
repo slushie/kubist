@@ -1,10 +1,10 @@
 import pouch from '@/lib/pouch'
-import m from 'mithril'
-import _ from 'lodash'
+import template from './dashboard.pug'
 
 class Dashboard {
   constructor () {
     this.doc = null
+    this.value = 'world'
   }
 
   oncreate () {
@@ -23,7 +23,7 @@ class Dashboard {
   }
 
   view () {
-    return m('div', _.get(this.doc, 'metadata.resourceVersion'))
+    return template(this)
   }
 }
 
