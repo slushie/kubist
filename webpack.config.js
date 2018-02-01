@@ -41,37 +41,16 @@ module.exports = {
         ]
       },
       {
-        test: /\.pug$/,
+        test: /\.jsx/,
         exclude: /node_modules/,
         use: [
           {
-            // transform JSX to javascript
+            // transform JSX to javascript with mithril armour
             loader: 'babel-loader',
             options: {
               plugins: [
                 ['transform-react-jsx', {pragma: 'm'}]
               ]
-            }
-          },
-          {
-            // pug-as-jsx imports react, but we want mithril
-            loader: 'string-replace-loader',
-            options: {
-              search: '^import React .+$',
-              replace: "import m from 'mithril'",
-              flags: 'm'
-            }
-          },
-          {
-            loader: 'pug-as-jsx-loader'
-          },
-          {
-            // pug-as-jsx does interpolation with JSX syntax
-            loader: 'string-replace-loader',
-            options: {
-              search: '#\\{(.+?)\\}',
-              replace: '{$1}',
-              flags: ''
             }
           }
         ]

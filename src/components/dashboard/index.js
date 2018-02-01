@@ -1,5 +1,5 @@
 import pouch from '@/lib/pouch'
-import template from './dashboard.pug'
+import template from './table.jsx'
 
 class Dashboard {
   constructor () {
