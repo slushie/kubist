@@ -1,9 +1,7 @@
 import template from './template.jsx'
 
-class Navbar {
+export default class Navbar {
   view (vnode) {
     return template(vnode)
   }
 }
-
-export default Navbar
