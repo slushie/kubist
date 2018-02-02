@@ -10,7 +10,7 @@ export default function (vnode) {
     </tr>
   ))
   return (
-    <table>
+    <table class='table is-striped'>
       <tr>
         <th>Kind</th>
         <th>Name</th>
