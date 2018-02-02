@@ -1,11 +1,5 @@
-import pouch from '@/lib/pouch'
-import m from 'mithril'
+import Pouch from './lib/pouch'
 
-import Dashboard from './components/dashboard'
+import './router/routes'
 
-// routing
-m.route(document.body, '/dashboard', {
-  '/dashboard': Dashboard
-})
-
-pouch.start()
+Pouch.start()
