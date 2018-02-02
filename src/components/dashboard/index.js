@@ -1,29 +1,38 @@
-import pouch from '@/lib/pouch'
-import template from './table.jsx'
+import m from 'mithril'
+import Pouch from '@/lib/pouch'
+import template from './template.jsx'
 
 class Dashboard {
   constructor () {
-    this.doc = null
-    this.value = 'world'
+    this.docs = []
+
+    Pouch.localDb.allDocs({
+      include_docs: true,
+      limit: 15
+    }).then((results) => {
+      this.docs = results.rows.map(r => r.doc)
+      this.watchChanges()
+      m.redraw()
+    }).catch((err) => {
+      console.error(err)
+    })
   }
 
-  oncreate () {
-    this.changes = pouch.watchChanges({
+  watchChanges () {
+    if (this.changes) this.changes.cancel()
+    this.changes = Pouch.watchChanges({
       live: true,
       retry: true,
-      include_docs: true
+      doc_ids: this.docs.map(d => d._id)
     })
-      .on('change', (e) => {
-        this._handleChange(e)
-      })
   }
 
-  _handleChange (info) {
-    this.doc = info.doc
+  onremove () {
+    if (this.changes) this.changes.cancel()
   }
 
-  view () {
-    return template(this)
+  view (vnode) {
+    return template(vnode)
   }
 }
 
