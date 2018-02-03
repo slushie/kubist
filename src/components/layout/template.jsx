@@ -11,7 +11,14 @@ export default function (vnode) {
         {vnode.children}
       </div>
 
-      <Tag text='testing' type='primary' size='m' />
+      <Tag type='primary' size='m' rounded='true'>
+        Testing
+      </Tag>
+      <Tag type='warning'>
+        Warning!
+        <button className='delete'/>
+      </Tag>
+      <Tag type='danger' delete='true'/>
     </div>
   )
 }

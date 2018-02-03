@@ -6,6 +6,8 @@ export default function (vnode) {
   const state = vnode.state
 
   return (
-    <span className={state.tagClass}>{attrs.text}</span>
+    <span className={state.tagClass}>
+      {vnode.children}
+    </span>
   )
 }
