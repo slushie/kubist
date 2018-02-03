@@ -28,7 +28,7 @@ export default class Tag {
 
     this.tagClass = 'tag'
     this.type = _type['black']
-    this.size = null
+    this.size = _size['s']
 
     if (attrs.type) {
       this.type = _type[attrs.type]
