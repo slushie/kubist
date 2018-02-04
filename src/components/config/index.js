@@ -38,7 +38,6 @@ class Config {
           title: db.replace(/^kubist\//, ''),
           value: url.resolve(this.baseUrl, encodeURIComponent(db))
         }))
-      this.selected = this.dbs.length ? this.dbs[0].value : ''
     })
       .catch((err) => {
         this.listing = false
