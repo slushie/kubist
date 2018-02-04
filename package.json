@@ -51,8 +51,12 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "http-pouchdb": "^4.0.0",
     "lodash": "^4.17.4",
     "mithril": "^1.1.6",
-    "pouchdb": "^6.4.2"
+    "pouchdb": "^6.4.2",
+    "pouchdb-all-dbs": "^1.0.2",
+    "pouchdb-find": "^6.4.3",
+    "pouchdb-live-find": "^0.4.0"
   }
 }

@@ -5,7 +5,9 @@ import template from './template.jsx'
 class Dashboard {
   constructor () {
     this.docs = []
+  }
 
+  oncreate () {
     Pouch.localDb.allDocs({
       include_docs: true,
       limit: 15

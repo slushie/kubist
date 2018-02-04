@@ -1,5 +1,3 @@
-import Pouch from './lib/pouch'
+import configureRoutes from './router/routes'
 
-import './router/routes'
-
-Pouch.start()
+configureRoutes(document.body)
