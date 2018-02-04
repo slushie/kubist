@@ -1,6 +1,6 @@
 import m from 'mithril'
 import url from 'url'
-import { listRemoteDBs, replicateFrom } from '@/db'
+import { listRemoteDBs, replicateFrom } from '@/docs'
 import template from './template.jsx'
 
 class Config {

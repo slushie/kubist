@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { isReplicating } from '@/db'
+import { isReplicating } from '@/docs'
 import Layout from '@/components/layout'
 
 const CONFIG_PATH = '/config'
