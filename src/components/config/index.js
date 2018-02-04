@@ -57,7 +57,7 @@ class Config {
     }
 
     replicateFrom(this.selected)
-    m.route.set('/dashboard')
+      .on('active', () => m.route.set('/dashboard'))
   }
 
   view () {
