@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
+  devtool: 'eval-source-map',
   entry: './src/main.js', // entry point of application
   plugins: [
     new HtmlWebpackPlugin({
@@ -58,6 +59,7 @@ module.exports = {
     ]
   },
   resolve: {
+    extensions: ['.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src/')
     }
