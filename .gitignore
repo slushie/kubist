@@ -9,6 +9,5 @@ thumbs.db
 !.gitkeep
 .idea/
 src/main/log.txt
-src/db/
 src/config.js
 log.txt
