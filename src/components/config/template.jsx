@@ -7,8 +7,8 @@ export default function (vnode) {
   const listDBs = () => { vnode.state.listDBs() }
   const configureDB = () => { vnode.state.configureDB() }
 
-  const setBaseUrl = (v) => { vnode.state.setBaseUrl(v) }
-  const setSelected = (v) => { vnode.state.setSelected(v) }
+  const setBaseUrl = (x) => { vnode.state.setBaseUrl(x) }
+  const setSelected = (x) => { vnode.state.setSelected(x) }
 
   if (dbs.length === 0) {
     dbs.push({

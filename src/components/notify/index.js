@@ -1,5 +1,5 @@
 import template from './template'
-const messages = []
+const messages = [] // just one global msg queue
 
 const DEFAULT_DURATION = 5000
 
