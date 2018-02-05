@@ -1,21 +1,24 @@
 import m from 'mithril' // eslint-disable-line no-unused-vars
+import classnames from 'classnames'
 
 export default function (vnode) {
+  const state = vnode.state
+
+  let dashboard = classnames({
+    'navbar-item': true,
+    'is-active': state.activeRoute['dashboard']
+  })
+
+  let demo = classnames({
+    'navbar-item': true,
+    'is-active': state.activeRoute['demo']
+  })
+
   return (
     <nav class="navbar">
       <div class="navbar-brand">
-        <a class="navbar-item" href="http://bulma.io">
+        <a class='navbar-item' href="#">
           <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28"/>
-        </a>
-        <a class="navbar-item is-hidden-desktop" href="https://github.com/jgthms/bulma" target="_blank">
-          <span class="icon" style="color: #333;">
-            <i class="fa fa-github"></i>
-          </span>
-        </a>
-        <a class="navbar-item is-hidden-desktop" href="https://twitter.com/jgthms" target="_blank">
-          <span class="icon" style="color: #55acee;">
-            <i class="fa fa-twitter"></i>
-          </span>
         </a>
         <div class="navbar-burger burger" data-target="navMenuExample">
           <span></span>
@@ -25,11 +28,14 @@ export default function (vnode) {
       </div>
       <div id="navMenuExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item " href="#">
-            Home
+          <a class={`${dashboard}`} href="#!/dashboard">
+            Dashboard
+          </a>
+          <a class={`${demo}`} href="#!/demo">
+            Demo
           </a>
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link  is-active" href="/documentation/overview/start/">
+            <a class='navbar-link' href="/documentation/overview/start/">
               Docs
             </a>
             <div class="navbar-dropdown ">
@@ -147,29 +153,9 @@ export default function (vnode) {
           </div>
         </div>
         <div class="navbar-end">
-          <a class="navbar-item" href="https://github.com/jgthms/bulma" target="_blank">
+          <a class="navbar-item" href="https://github.com/slushie/kubist" target="_blank">
             Github
           </a>
-          <a class="navbar-item" href="https://twitter.com/jgthms" target="_blank">
-            Twitter
-          </a>
-          <div class="navbar-item">
-            <div class="field is-grouped">
-              <p class="control">
-                <a id="twitter" class="button">
-                  <span>Tweet</span>
-                </a>
-              </p>
-              <p class="control">
-                <a class="button is-primary" href="https://github.com/jgthms/bulma/archive/0.4.3.zip">
-                  <span class="icon">
-                    <i class="fa fa-download"></i>
-                  </span>
-                  <span>Download</span>
-                </a>
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </nav>

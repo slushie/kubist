@@ -1,8 +1,12 @@
+/***
+**** https://bulma.io/documentation/elements/tag/
+***/
+
 import template from './template.jsx'
 
 export default class Tag {
   constructor (vnode) {
-    const state = vnode.attrs
+    const attrs = vnode.attrs
 
     const _type = {
       'black': 'is-black',
@@ -22,18 +26,27 @@ export default class Tag {
       s: 'is-small'
     }
 
+    this.tagClass = 'tag'
     this.type = _type['black']
-    this.size = null
+    this.size = _size['s']
 
-    if (state.type) {
-      this.type = _type[state.type]
+    if (attrs.type) {
+      this.type = _type[attrs.type]
+      this.tagClass = `${this.tagClass} ${this.type}`
     }
 
-    if (state.size) {
-      this.size = _size[state.size]
+    if (attrs.size) {
+      this.size = _size[attrs.size]
+      this.tagClass = `${this.tagClass} ${this.size}`
     }
 
-    this.tagClass = `tag ${this.type} ${this.size}`
+    if (attrs.rounded) {
+      this.tagClass = `${this.tagClass} is-rounded`
+    }
+
+    if (attrs.delete) {
+      this.tagClass = `${this.tagClass} is-delete`
+    }
   }
 
   view (vnode) {

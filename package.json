@@ -50,6 +50,7 @@
     "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "http-pouchdb": "^4.0.0",
     "lodash": "^4.17.4",
     "mithril": "^1.1.6",
