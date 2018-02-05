@@ -2,6 +2,7 @@ import m from 'mithril'
 import url from 'url'
 import { listRemoteDBs, replicateFrom } from '@/docs'
 import template from './template.jsx'
+import Notify from '@/components/notify'
 
 class Config {
   constructor () {
@@ -38,15 +39,15 @@ class Config {
           title: db.replace(/^kubist\//, ''),
           value: url.resolve(this.baseUrl, encodeURIComponent(db))
         }))
+      this.selected = this.dbs.length ? this.dbs[0].value : ''
+
+      m.redraw()
     })
       .catch((err) => {
         this.listing = false
         this.selected = ''
         this.dbs = []
-        console.error(err)
-      })
-      .then(() => {
-        m.redraw()
+        Notify.handleRejection(err)
       })
   }
 
