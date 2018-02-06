@@ -1,6 +1,4 @@
 import m from 'mithril'
-import _ from 'lodash'
-
 import { getLocalDB } from './db'
 
 export function liveFind (query) {
