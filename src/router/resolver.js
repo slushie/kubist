@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { isReplicating } from '@/docs'
+import { replication } from '@/docs'
 import Layout from '@/components/layout'
 
 const CONFIG_PATH = '/config'
@@ -8,7 +8,7 @@ const CONFIG_PATH = '/config'
 export default function routeResolver (...children) {
   return {
     onmatch (args, path) {
-      if (path !== CONFIG_PATH && !isReplicating()) {
+      if (path !== CONFIG_PATH && !replication()) {
         m.route.set(CONFIG_PATH)
       }
     },
