@@ -1,26 +1,31 @@
 import m from 'mithril' // eslint-disable-line no-unused-vars
 
 export default function (vnode) {
-  const { listing, baseUrl, dbs, selected } = vnode.state
-  const loadingClass = listing ? 'is-loading' : ''
+  const { baseUrl, dbs, selection } = vnode.state
+  const loadingClass = dbs() ? '' : 'is-loading'
 
+  const selectDB = () => { vnode.state.selectDB() }
   const listDBs = () => { vnode.state.listDBs() }
-  const configureDB = () => { vnode.state.configureDB() }
+  const updateSelection = (v) => { v.dom.value = selection() }
 
-  const setBaseUrl = (x) => { vnode.state.setBaseUrl(x) }
-  const setSelected = (x) => { vnode.state.setSelected(x) }
-
-  if (dbs.length === 0) {
-    dbs.push({
-      disabled: true,
-      value: '',
-      title: 'No databases available'
-    })
+  const keydownBaseUrl = (e) => {
+    if (e.keyCode === 13) {
+      listDBs()
+      return false
+    }
   }
 
+  const dbOptions = dbs.map((dbs) => dbs.map(db => {
+    return (
+      <option {...db} key={db.value} selected={db.value === selection()}>
+        {db.label}
+      </option>
+    )
+  }))()
+
   return (
-    <div class='box'>
-      <div class='card'>
+    <div className='box'>
+      <div className='card'>
         <header className='card-header'>
           <p className='card-header-title'>
             Choose a Database
@@ -37,9 +42,9 @@ export default function (vnode) {
               <div className='field'>
                 <div className={'control is-expanded ' + loadingClass}>
                   <input type='url' id='base-url'
-                    value={baseUrl}
-                    oninput={m.withAttr('value', setBaseUrl)}
-                    onkeydown={(e) => { if (e.keyCode === 13) listDBs() }}
+                    value={baseUrl()}
+                    oninput={m.withAttr('value', baseUrl)}
+                    onkeydown={keydownBaseUrl}
                     placeholder='ex, http://localhost:5984/'
                     className='input' />
                 </div>
@@ -57,9 +62,9 @@ export default function (vnode) {
                 <div className='control is-expanded'>
                   <div className='select is-fullwidth'>
                     <select id='select-db'
-                      onupdate={(v) => setSelected(v.dom.value)}
-                      onchange={m.withAttr('value', setSelected)}>
-                      {dbs.map(db => m('option', db, db.title))}
+                      onupdate={updateSelection}
+                      onchange={m.withAttr('value', selection)}>
+                      {dbOptions}
                     </select>
                   </div>
                 </div>
@@ -72,7 +77,7 @@ export default function (vnode) {
               <div className='field is-grouped is-grouped-right'>
                 <div className='control'>
                   <button className='button is-info'
-                    disabled={!/^https?:\/\/\w+/.test(baseUrl)}
+                    disabled={!/^https?:\/\//.test(baseUrl())}
                     onclick={listDBs}>
                     Refresh DB List
                   </button>
@@ -80,8 +85,8 @@ export default function (vnode) {
 
                 <div className='control'>
                   <button className='button is-primary'
-                    onclick={configureDB}
-                    disabled={!selected}>
+                    disabled={!selection()}
+                    onclick={selectDB}>
                     Select DB
                   </button>
                 </div>

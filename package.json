@@ -8,6 +8,12 @@
     "build": "webpack -d --verbose",
     "lint": "standard"
   },
+  "standard": {
+    "env": {
+      "node": true,
+      "browser": true
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/slushie/kubist.git"

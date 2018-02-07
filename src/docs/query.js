@@ -1,7 +1,7 @@
 import m from 'mithril'
-import { getLocalDB } from './db'
+import { localDB } from './db'
 
 export function liveFind (query) {
-  return getLocalDB().liveFind(query)
+  return localDB().liveFind(query)
     .on('update', () => setImmediate(m.redraw))
 }
