@@ -4,31 +4,26 @@ import pluginAllDBs from 'pouchdb-all-dbs'
 import pluginFind from 'pouchdb-find'
 import pluginLiveFind from 'pouchdb-live-find'
 
-import stream from 'mithril/stream'
 import { debug } from '@/utils/log'
 
 PouchDB.plugin(pluginAllDBs)
 PouchDB.plugin(pluginFind)
 PouchDB.plugin(pluginLiveFind)
 
-export const localDB = stream()
-export const replication = stream()
-
 export function listRemoteDBs (baseUrl) {
   return HttpPouchDB(PouchDB, baseUrl).allDbs()
 }
 
+let replication
 export function replicateFrom (remoteUrl) {
   const name = remoteUrl.split('/').pop()
-  const db = new PouchDB(name)
-  localDB(db)
+  const localDB = new PouchDB(name)
 
-  const previous = replication()
-  if (previous) previous.cancel()
+  if (isReplicating()) replication.cancel()
 
-  const events = db.replicate.from(
+  replication = localDB.replicate.from(
     new PouchDB(remoteUrl),
-    { live: true, retry: true }
+    { live: true, retry: true, return_docs: false }
   ).on('change', (info) => {
     // handle change
     debug('root change', info)
@@ -49,5 +44,9 @@ export function replicateFrom (remoteUrl) {
     debug('root error', err)
   })
 
-  return replication(events)
+  return replication
+}
+
+export function isReplicating () {
+  return replication && !replication.cancelled
 }

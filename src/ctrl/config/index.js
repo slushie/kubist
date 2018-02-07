@@ -61,7 +61,7 @@ export default class ConfigController {
 
   selectDB () {
     this.selection.map((remoteUrl) => {
-      model.replicateDB(remoteUrl)
+      m.route.set('/ctrl/diff', { remoteUrl })
     })
   }
 

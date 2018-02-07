@@ -1,4 +1,4 @@
-import { listRemoteDBs, replicateFrom } from '@/docs'
+import { listRemoteDBs } from '@/docs'
 
 export default class ConfigModel {
   listDBs (baseUrl) {
@@ -8,10 +8,6 @@ export default class ConfigModel {
       }
       return dbs
     })
-  }
-
-  replicateDB (remoteUrl) {
-    return replicateFrom(remoteUrl)
   }
 }
 
